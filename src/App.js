@@ -5,7 +5,7 @@ import fetchData from './api/abq';
 function App() {
   const [state, setState] = useState({
     isLoading: true,
-    selectedMovie: {},
+    selectedLocations: null,
     moviesTitles: null,
     moviesWithLocations: null,
   });
@@ -23,9 +23,13 @@ function App() {
 
   function selectMovie(movieTitle) {
     const movie = state.moviesWithLocations[movieTitle];
+    const locations = Object.keys(movie.locations).map((locationId) => ({
+      locationId,
+      ...movie.locations[locationId],
+    }));
     setState({
       ...state,
-      selectedMovie: movie,
+      selectedLocations: locations,
     });
   }
 
@@ -47,7 +51,7 @@ function App() {
           ))}
         </select>
       </div>
-      <Map locations={state.selectedMovie.locations} />
+      <Map locations={state.selectedLocations} />
     </div>
   );
 }

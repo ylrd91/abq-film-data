@@ -6,21 +6,29 @@ const convertData = (data) => {
   const moviesWithLocations = data.features
     .filter((feature) => feature.attributes.Type === 'Movie')
     .reduce((accum, current) => {
-      const { Title: movieTitle } = current.attributes;
+      const {
+        OBJECTID: id, Title: movieTitle, Site: site, Address: address,
+      } = current.attributes;
       if (!accum[movieTitle]) {
         moviesTitles.push(movieTitle);
         Object.assign(accum, {
-          [movieTitle]: { title: movieTitle, locations: [] },
+          [movieTitle]: { title: movieTitle, locations: {} },
         });
       }
-      accum[movieTitle].locations.push({
-        id: current.attributes.OBJECTID,
-        address: current.attributes.Address,
-        site: current.attributes.Site,
-        originalDetais: current.attributes.OriginalDetails,
-        shootDate: new Date(current.attributes.ShootDate).toLocaleDateString(),
-        geometry: { lat: current.geometry.y, lng: current.geometry.x },
-      });
+      const key = `${site}-${address}`;
+      const movieLocation = accum[movieTitle].locations[key];
+      const shootDate = new Date(current.attributes.ShootDate).toLocaleDateString();
+      if (!movieLocation) {
+        accum[movieTitle].locations[key] = {
+          id: current.attributes.OBJECTID,
+          address,
+          site,
+          shootDates: [shootDate],
+          geometry: { lat: current.geometry.y, lng: current.geometry.x },
+        };
+      } else {
+        movieLocation.shootDates.push(shootDate);
+      }
       return accum;
     }, {});
 

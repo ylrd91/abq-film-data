@@ -10,7 +10,7 @@ function Location({ location }) {
   const [isVisible, setVisibility] = useState(false);
 
   const {
-    id, address, site, shootDate, geometry,
+    id, address, site, geometry, shootDates,
   } = location;
 
   useEffect(() => {
@@ -38,7 +38,12 @@ function Location({ location }) {
           <div className="flex flex-col">
             <span className="mb-2 font-bold">{address}</span>
             <span className="mb-2">{site}</span>
-            <span>{shootDate}</span>
+            <span className="mb-1 font-medium">Shoot dates</span>
+            <ul>
+              {shootDates.map((shootDate) => (
+                <li>{shootDate}</li>
+              ))}
+            </ul>
           </div>
         </InfoWindow>
       )}
